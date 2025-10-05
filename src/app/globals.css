@@ -1,9 +1,25 @@
 @import "tailwindcss";
+@import "react-toastify/dist/ReactToastify.css";
 
 :root {
   --background: #0a090f;
   --foreground: #0a090f;
   --font-roboto-mono: "Roboto Mono", monospace;
+
+  /* Toast Customize Colors */
+  --toastify-color-light: #ededed;
+  --toastify-color-dark: #0a0a0a;
+  --toastify-color-info: #3498db;
+  --toastify-color-success:#ff8904;
+  --toastify-color-warning: #f1c40f;
+  --toastify-color-error: #e74c3c;
+  --toastify-color-transparent: rgba(255, 255, 255, 0.7);
+
+  --toastify-text-color-light: #0a0a0a;
+  --toastify-text-color-dark: #ededed;
+
+  --toastify-spinner-color: #616161;
+  --toastify-spinner-color-empty-area: #e0e0e0;
 }
 /* ::-webkit-scrollbar {
   display: none;

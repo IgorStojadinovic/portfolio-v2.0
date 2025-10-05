@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 interface FormData {
   name: string;
@@ -36,6 +37,7 @@ export default function Contact() {
       }
 
       setSuccess(true);
+      toast.success("Message sent successfully!");
       reset();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -135,18 +137,14 @@ export default function Contact() {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="z-20 flex w-1/2 flex-col gap-6"
+          className="z-20 mt-24 flex w-1/2 flex-col gap-6"
         >
           {error && (
             <div className="rounded-xs border border-red-500 bg-red-100 p-2 text-red-700">
               {error}
             </div>
           )}
-          {success && (
-            <div className="rounded-xs border border-green-500 bg-green-100 p-2 text-green-700">
-              Message sent successfully!
-            </div>
-          )}
+
           <div className="relative">
             <input
               type="text"
@@ -201,14 +199,22 @@ export default function Contact() {
           <button
             type="submit"
             disabled={isLoading}
-            className={`rounded-xs border border-stone-500 bg-stone-900 p-2 text-stone-100 uppercase transition-colors ${
-              isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-stone-800"
-            }`}
+            className={`cursor-pointer rounded-xs border border-stone-500 bg-stone-900 p-2 text-stone-100 uppercase transition-colors ${
+              isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-amber-600"
+            } ${success ? "bg-green-500" : "bg-stone-900"}`}
           >
             {isLoading ? "Sending..." : "Send"}
           </button>
         </form>
       </div>
+      <ToastContainer
+        position="bottom-right"
+        theme="dark"
+        pauseOnHover={false}
+        autoClose={1500}
+        hideProgressBar={true}
+        transition={Bounce}
+      />
     </div>
   );
 }
