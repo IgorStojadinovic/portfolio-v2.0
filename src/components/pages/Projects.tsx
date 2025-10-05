@@ -9,7 +9,7 @@ export default function Projects() {
   const projects = [
     {
       title: "Audiophile",
-      description: "Fullstack Ecommerce website.",
+      description: "Ecommerce website.",
       technologies: [
         "Next.js",
         "TypeScript",
