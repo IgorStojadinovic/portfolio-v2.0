@@ -1,103 +1,194 @@
-import Image from "next/image";
+"use client";
+import Navbar from "@/components/navbar";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrambleTextPlugin } from "gsap/dist/ScrambleTextPlugin";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/dist/ScrollToPlugin";
+import { ScrollSmoother } from "gsap/dist/ScrollSmoother";
+import { useRef, useState } from "react";
+import NavLink from "@/components/NavLink";
+import About from "@/components/pages/About";
+import Skills from "@/components/pages/Skills";
+import Projects from "@/components/pages/Projects";
+import Contact from "@/components/pages/Contact";
 
+gsap.registerPlugin(
+  ScrambleTextPlugin,
+  ScrollTrigger,
+  ScrollToPlugin,
+  ScrollSmoother,
+);
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const linkRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const [activeLink, setActiveLink] = useState<string>("About");
+  const isScrollingRef = useRef(false);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const skillsRef = useRef<HTMLDivElement | null>(null);
+  const projectsRef = useRef<HTMLDivElement | null>(null);
+  const contactRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  useGSAP(() => {
+    // Kreiranje ScrollTrigger-a za svaku sekciju
+    const sections = [
+      { ref: aboutRef.current, name: "About" },
+      { ref: skillsRef.current, name: "Skills" },
+      { ref: projectsRef.current, name: "Projects" },
+      { ref: contactRef.current, name: "Contact" },
+    ];
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    sections.forEach(({ ref, name }) => {
+      ScrollTrigger.create({
+        trigger: ref,
+        start: "top 40%", // Aktivira se kada sekcija dostigne 40% visine ekrana
+        end: "bottom 40%",
+        onEnter: () => !isScrollingRef.current && setActiveLink(name),
+        onEnterBack: () => !isScrollingRef.current && setActiveLink(name),
+        markers: false, // Isključeni markeri u produkciji
+      });
+    });
+
+  /*   ScrollSmoother.create({
+      wrapper: "#smooth-wrapper",
+      content: "#smooth-content",
+      smooth: 1,
+    }); */
+  });
+
+  const components = {
+    About,
+    Skills,
+    Projects,
+    Contact,
+  };
+
+  const PageComponent = components[activeLink as keyof typeof components];
+  const handleMouseEnter = (index: number) => {
+    const target = linkRefs.current[index];
+    if (target) {
+      const linkElement = target.querySelector("a");
+      if (linkElement) {
+        const originalText = ["About", "Skills", "Projects", "Contact"][index];
+        gsap.to(linkElement, {
+          duration: 0.2,
+          scrambleText: {
+            text: originalText,
+            chars: "!@#$%^&*()",
+            revealDelay: 0.1,
+            speed: 0.3,
+          },
+        });
+      }
+    }
+  };
+  const handleMouseLeave = (index: number) => {
+    const target = linkRefs.current[index];
+    if (target) {
+      const linkElement = target.querySelector("a");
+      if (linkElement) {
+        const originalText = ["About", "Skills", "Projects", "Contact"][index];
+        gsap.to(linkElement, {
+          duration: 0.2,
+          scrambleText: {
+            text: originalText,
+            chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            revealDelay: 0.1,
+            speed: 0.3,
+          },
+        });
+      }
+    }
+  };
+
+  const handleLinkClick = (text: string) => {
+    setActiveLink(text);
+    isScrollingRef.current = true;
+
+    // Pronalazimo odgovarajuću referencu za sekciju
+    const sectionRefs = {
+      About: aboutRef,
+      Skills: skillsRef,
+      Projects: projectsRef,
+      Contact: contactRef,
+    };
+
+    // Uzimamo referencu za kliknutu sekciju
+    const targetRef = sectionRefs[text as keyof typeof sectionRefs];
+
+    if (targetRef?.current) {
+      // Smooth scroll do sekcije
+      gsap.to(window, {
+        duration: 0.5,
+        scrollTo: {
+          y: targetRef.current,
+          offsetY: 0,
+        },
+        ease: "power2.inOut",
+        onComplete: () => {
+          // Reset isScrolling nakon što se animacija završi
+          setTimeout(() => {
+            isScrollingRef.current = false;
+          }, 100);
+        },
+      });
+    }
+  };
+
+  return (
+    <div className="flex">
+      <div className="flex h-screen w-1/3 flex-col">
+        {/*    <Navbar /> */}
+        <section className="bg-background fixed z-10 h-full w-1/3 border-r border-l border-stone-800 text-white">
+          <article className="flex h-full w-full flex-col p-24">
+            <h1 className="text-4xl font-bold uppercase">Igor Stojadinovic</h1>
+            <h3 className="mt-2"> Fullstack Developer</h3>
+
+            <div className="w-[300px mt-2">
+              I build accessible, pixel-perfect digital experiences for the web.
+            </div>
+
+            <ul className="mt-2 flex flex-1 flex-col justify-evenly uppercase">
+              {["About", "Skills", "Projects", "Contact"].map((text, index) => (
+                <NavLink
+                  key={text}
+                  href={`#${text.toLowerCase()}`}
+                  text={text}
+                  isActive={activeLink === text}
+                  index={index}
+                  ref={(el) => {
+                    linkRefs.current[index] = el;
+                  }}
+                  mouseEnter={handleMouseEnter}
+                  mouseLeave={handleMouseLeave}
+                  onClick={handleLinkClick}
+                />
+              ))}
+            </ul>
+          </article>
+        </section>
+      </div>
+      <div className="w-2/3">
+        <div id="smooth-wrapper">
+          <div id="smooth-content">
+            <section className="flex-col" ref={containerRef}>
+              {/*    <PageComponent /> */}
+
+              <div ref={aboutRef} data-lag="2">
+                <About />
+              </div>
+              <div ref={skillsRef} data-lag="2">
+                <Skills />
+              </div>
+              <div ref={projectsRef} data-lag="2">
+                <Projects />
+              </div>
+              <div ref={contactRef} data-lag="2">
+                <Contact />
+              </div>
+            </section>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
 }
