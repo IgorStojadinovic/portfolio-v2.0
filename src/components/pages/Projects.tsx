@@ -40,12 +40,12 @@ export default function Projects() {
       ],
       link: "https://finance-dashboard-psi-sand.vercel.app/",
     },
-    /*   {
+    {
       title: "Ruess Group",
       description: "German marketing agency website.",
-      technologies: ["Prismic", "Next.js", "Tailwind"],
-      link: "https://ruess-group.com/de/",
-    }, */
+      technologies: ["Prismic", "Next.js", "SASS/SCSS"],
+      link: "https://ruess-group.com/en/",
+    },
   ];
   useGSAP(() => {
     const tl = gsap.timeline({
@@ -74,7 +74,7 @@ export default function Projects() {
 
   return (
     <div ref={containerRef} className="h-screen w-full p-24">
-      <h2 className="mb-8 text-3xl font-bold uppercase">Personal Projects</h2>
+      <h2 className="mb-8 text-3xl font-bold uppercase">Projects</h2>
       <div className="grid grid-cols-1 gap-8">
         {projects.map((project) => (
           <a
